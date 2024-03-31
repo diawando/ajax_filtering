@@ -21,3 +21,29 @@ class Produit(db.Model):
 def inde():
     return render_template('index.html')
 
+@app.route("/fetchrecords",methods=["POST","GET"])
+def fetchrecords():
+    if request.method == 'POST':
+        query = request.form['action']
+        minimum_price = request.form['minimum_price']
+        maximum_price = request.form['maximum_price']
+        category = request.form['category']
+        name = request.form['name']
+        #print(query)
+        if query == '':
+            data = Produit.query().all
+        else:
+             filters = [Produit.price.between(minimum_price, maximum_price)]
+             if category:
+                 filters.append(Produit.category == category)
+             if name:
+                 filters.append(Produit.name == name)
+ 
+             # Appliquer les filtres
+             data = Produit.query.filter(*filters).all()
+            
+        productlist = data
+    return jsonify({'htmlresponse': render_template('response.html', productlist=productlist)})
+  
+if __name__ == "__main__":
+    app.run(debug=True)

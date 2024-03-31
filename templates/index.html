@@ -21,7 +21,31 @@
                 <input type="hidden" id="hidden_maximum_price" value="65000" />
                 <p id="price_show">10 - 5000</p>
                 <div id="price_range"></div>
-            </div>                
+            </div>  
+            <div class="list-group">
+                <h3>Category</h3>
+                <select id="category_filter" class="form-control">
+                    <option value="">All</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Car">Car</option>
+                    <option value="Watch">Watch</option>
+                </select>
+            </div>   
+            <div class="list-group">
+                <h3>Name</h3>
+                <select id="name_filter" class="form-control">
+                    <option value="">Select a product</option>
+                    <option value="Samsung Galaxy A10S">Samsung Galaxy A10S</option>
+                    <option value="HP Laptop - 17z-ca100">HP Laptop - 17z-ca100</option>
+                    <option value="3 IN 1 CAR VOLTMETER">3 IN 1 CAR VOLTMETER</option>
+                    <option value="Gucci G-Timeless">Gucci G-Timeless</option>
+                    <option value="Infinix Hot S3">Infinix Hot S3</option>
+                    <option value="VIVO V9 Youth">VIVO V9 Youth</option>
+                    <option value="Moto E4 Plus">Moto E4 Plus</option>
+                    <option value="Lenovo K8 Plus">Lenovo K8 Plus</option>
+                </select>
+            </div>                       
         </div>
         <div class="col-md-9">
            <div class="row filter_data">
@@ -38,41 +62,54 @@
 }
 </style>
 <script>
-     $(document).ready(function(){
-        filter_data();
-        functin filter_data()
-        {
-            $('.filter_data').html('<div id="loading" style=""></div>');
-            var action = 'fetch_data';
-            var minimum_price = $('#hidden_minimum_price').val();
-            var maximum_price = $('#hidden_maximum_price').val();
-            $.ajax({
-                url:"/fetchrecods",
-                method: "POST",
-                data : {action:action, minimum_price:minimum_price, maximum_price:maximum_price},
-                success: function(data){
-                       $('.filter_data').html(data);
-                       $('.filter_data').append(data.htmlresponse);
-                }
-            });
-        }
-        $('#price_range').slider({
-            range:true,
-            min:50,
-            max:5000,
-            values: [50, 5000],
-            step : 50,
-            stop : function(event, ui)
-            {
-                $('#price_show').html(ui.values[0] + '_' + ui.values[1]);
-                $('#hidden_minimum_price').val(ui.values[0]);
-                $('hidden_maximum_price').val(ui.values[1]);
-                filter_data();
+$(document).ready(function(){
+    filter_data();
+    function filter_data()
+    {
+        $('.filter_data').html('<div id="loading" style="" ></div>');
+        var action = 'fetch_data';
+        var minimum_price = $('#hidden_minimum_price').val();
+        var maximum_price = $('#hidden_maximum_price').val();
+        var category = $('#category_filter').val();
+        var name = $('#name_filter').val();
+        $.ajax({
+            url:"/fetchrecords",
+            method:"POST",
+            data:{
+                action:action,
+                minimum_price:minimum_price,
+                maximum_price:maximum_price, 
+                category:category,
+                name:name
+             },
+            success:function(data){
+                $('.filter_data').html(data);
+                $(".filter_data").append(data.htmlresponse);
             }
-        })
+        });
+    }
+    $('#price_range').slider({
+        range:true,
+        min:50,
+        max:5000,
+        values:[50, 5000],
+        step:50,
+        stop:function(event, ui)
+        {
+            $('#price_show').html(ui.values[0] + ' - ' + ui.values[1]);
+            $('#hidden_minimum_price').val(ui.values[0]);
+            $('#hidden_maximum_price').val(ui.values[1]);
+            filter_data();
+        }
+    });
 
-     });
-
+    $('#category_filter').change(function() {
+        filter_data(); 
+    });
+    $('#name_filter').change(function(){
+        filter_data();
+    });
+});
 </script>
 </body>
 </html>
