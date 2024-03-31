@@ -19,4 +19,5 @@ class Produit(db.Model):
 
 @app.route('/')
 def inde():
-    return
+    return render_template('index.html')
+
